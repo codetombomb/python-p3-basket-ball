@@ -1,3 +1,4 @@
+from functools import reduce
 def game_dict():
     return {
         "home": {
@@ -182,3 +183,62 @@ def game_dict():
             ]
         }
     }
+
+home_team = game_dict().get("home")
+away_team = game_dict().get("away")
+
+home_players = home_team.get("players")
+away_players = away_team.get("players")
+all_players = home_players + away_players
+
+def num_points_per_game(player_name):
+    return next((player.get("points_per_game") for player in all_players if player.get("name") == player_name), None)
+
+def player_age(player_name):
+    return next(player.get("age") for player in all_players if player.get("name") == player_name)
+
+def team_colors(team_name):
+    if home_team.get("team_name") == team_name:
+        return home_team.get("colors")
+    else:
+        return away_team.get("colors")
+
+def team_names():
+    return [home_team.get("team_name"), away_team.get("team_name")]
+
+def player_numbers(team_name):
+    if home_team.get("team_name") == team_name:
+        return [player.get("number") for player in home_players]
+    else: 
+        return [player.get("number") for player in away_players]
+
+def player_stats(player_name):
+   return next(player for player in all_players if player.get("name") == player_name)
+
+def add(tally, num):
+    return tally + num
+
+def average_rebounds_by_shoe_brand():
+    # create an empty dictionary brand_rebounds
+    brand_rebounds = {}
+    # iterate over the all_players array
+    for player in all_players:
+        # if current player's shoe brand not in dict
+        if player.get("shoe_brand") not in brand_rebounds:
+            # create key of brand and set value to empty array with rebound value as element
+            # breakpoint()
+            brand_rebounds[player.get("shoe_brand")] = [player.get("rebounds_per_game")]
+        # else:
+        else:
+            # breakpoint()
+        
+            # append rebound value of curr player to the brand array that was found
+            brand_rebounds[player.get("shoe_brand")].append(player.get("rebounds_per_game"))
+        
+    # iterate through brand_rebounds and for each key
+    for brand, value in brand_rebounds.items():
+        # print(value)
+        # total value array and divide by length of array and print
+        print(f"{brand}: ", "{0:.2f}".format(reduce(add, value, 0) / len(value)))
+
+average_rebounds_by_shoe_brand()
